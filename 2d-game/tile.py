@@ -9,15 +9,17 @@ except ImportError, err:
     print "cannot load module(s)"
     sys.exit(2)
 
-class Tile(object):
+class Tile(pygame.sprite.Sprite):
     def __init__(self, id, name, tile_size = 32):
+        pygame.sprite.Sprite.__init__(self)
         self.id = id
         self.name = name
         self.tile_size = tile_size
 
-    def set_image(self, tileset_image):
+    def set_image(self, tileset_image, location):
         rect = (self.id * self.tile_size, 0, self.tile_size, self.tile_size)
         self.image = tileset_image.subsurface(rect)
+        self.rect = (location[0] * self.tile_size, location[1] * self.tile_size, self.tile_size, self.tile_size)
 
 class TileDirt(Tile):
     def __init__(self):

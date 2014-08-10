@@ -15,7 +15,7 @@ except ImportError, err:
     print "cannot load module(s)!",
     sys.exit(2)
 
-class Game:
+class Game(object):
     
     def __init__(self):
         #set physics variables
@@ -41,8 +41,7 @@ class Game:
         self.entities = pygame.sprite.Group(player)
         self.objects = dict(world=world, player=player)
         
-        #self.path_finder = pathfinder.PathFinder(world.map)
-        #self.move()
+        self.path_finder = pathfinder.PathFinder(world.map)
 
     def get_time(self):
         #returns time passed in seconds
@@ -58,46 +57,26 @@ class Game:
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 mouse_position = pygame.mouse.get_pos()
                 mouse_location = self.get_mouse_location(mouse_position)
-                player.set_movement_points("right")
+                self.move_entity(player, mouse_location)
 
     def get_mouse_location(self, mouse_position):
-        x = self.objects["world"].rect.left + mouse_position[0]
-        y = self.objects["world"].rect.top + mouse_position[1]
+        x = (self.objects["world"].rect.left + mouse_position[0]) / self.tile_size
+        y = (self.objects["world"].rect.top + mouse_position[1]) /self.tile_size
         return (x, y)
 
-    def handle_movement(self):
-        player = self.objects["player"]
-        s = self.tile_size / (player.movement_limit * 100)
-        if player.get_movement_points(0) > 0:
-            self.objects["world"].rect.top += s
-            player.modify_movement_points(0, -s)
-        if player.get_movement_points(1) > 0:
-            self.objects["world"].rect.left -= s
-            player.modify_movement_points(1, -s)
-        if player.get_movement_points(2) > 0:
-            self.objects["world"].rect.top -= s
-            player.modify_movement_points(2, -s)
-        if player.get_movement_points(3) > 0:
-            self.objects["world"].rect.left += s
-            player.modify_movement_points(3, -s)
-
-
-    def move(self):
-        start, goal = (1,1), (7,8)
-        print self.path_finder.find(start, goal)
+    def move_entity(self, entity, goal):
+        start = entity.location
+        path = self.path_finder.find(start, goal)
+        entity.path = path
 
     def update(self):
         self.handle_input()
-        self.handle_movement()
         #call update method for all entities
         self.entities.update()  
-        for entity in self.entities:
-            #update player location relative to map
-            entity.location[0] = entity.position[0] - self.objects["world"].rect.left
-            entity.location[1] = entity.position[1] - self.objects["world"].rect.top
         
     def render(self):
-        self.screen.blit(self.objects["world"].image, self.objects["world"].rect)
+        dirty_tiles = self.objects["world"].tiles.draw(self.screen)
+        dirty_entities = self.entities.draw(self.screen)
         pygame.display.update()
 
     def play(self):

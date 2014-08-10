@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import heapq
 
-class PriorityQueue:
+class PriorityQueue(object):
    def __init__(self):
       self.elements = []
    
@@ -14,7 +14,7 @@ class PriorityQueue:
    def get(self):
       return heapq.heappop(self.elements)[1]
 
-class PathFinder:
+class PathFinder(object):
     def __init__(self, map):
         self.nodes = map
 
@@ -25,7 +25,7 @@ class PathFinder:
             neighbour = (node[0] + dir[0], node[1] + dir[1])
             for possible_neighbour in self.nodes:
                 if possible_neighbour[0] == neighbour[0] and possible_neighbour[1] == neighbour[1]:
-                    result.append(neighbour)
+                    result.append((neighbour[0], neighbour[1]))
         return result
 
     def search(self, start, goal):
