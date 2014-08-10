@@ -36,13 +36,13 @@ class Game:
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption(self.name)
         #initialise objects
-        world = WORLD.World("level.map", "key.txt", self.tile_size)
+        world = WORLD.World("level.map", self.tile_size)
         player = PLAYER.Player(self.tile_size)
         self.entities = pygame.sprite.Group(player)
         self.objects = dict(world=world, player=player)
         
-        self.path_finder = pathfinder.PathFinder(world.map)
-        self.move()
+        #self.path_finder = pathfinder.PathFinder(world.map)
+        #self.move()
 
     def get_time(self):
         #returns time passed in seconds
@@ -124,9 +124,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-##########################
-when pathfinder looks for neighbours it trys to match 2 length tuples to 3 length tuples
-how can i match the coordinates of a neighbour back to the 3 length tuple which contains additional information
-maybe try to match tile[x] and tile[y]

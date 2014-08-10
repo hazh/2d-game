@@ -20,7 +20,8 @@ def load_image(name):
     except pygame.error, message:
         print "cannot load image:", name
         raise SystemExit, message
-    return image, image.get_rect()        
+    print "loading image"
+    return image, image.get_rect()         
 
 def load_sound(name):
     #load a sound
