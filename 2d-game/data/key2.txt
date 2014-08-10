@@ -1,0 +1,11 @@
+[0]
+tile: .
+name = grass
+
+[1]
+tile: %
+name = mud
+
+[2]
+tile: #
+name = wall

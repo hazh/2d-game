@@ -1,0 +1,11 @@
+[.]
+id: 0
+name = grass
+
+[%]
+id: 1
+name = mud
+
+[#]
+id: 2
+name = wall
