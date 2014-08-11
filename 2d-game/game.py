@@ -69,10 +69,10 @@ class Game(object):
         path = self.path_finder.find(start, goal)
         entity.path = path
 
-    def update(self):
+    def update(self, dt):
         self.handle_input()
         #call update method for all entities
-        self.entities.update()  
+        self.entities.update(dt)  
         
     def render(self):
         dirty_tiles = self.objects["world"].tiles.draw(self.screen)
@@ -91,7 +91,7 @@ class Game(object):
             self.time_current = time_new        
             #update
             while self.accumulator >= dt:
-                self.update()
+                self.update(dt)
                 self.accumulator -= dt
             #render
             self.render()

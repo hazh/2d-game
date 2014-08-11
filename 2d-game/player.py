@@ -21,73 +21,63 @@ class Player(pygame.sprite.Sprite):
         self.location = (1, 1)
         self.path = []
         self.movement_cooldown = 0.0
-        self.movement_limit = 0.16
+        self.movement_limit = 0.08
         self.movement_points = [0, 0, 0, 0] #up, right, down, left:
         
-    def update(self):
-        self.handle_movement()
-        #set rect according to position
+    def update(self, dt):
+        self.handle_movement(dt)
+        self.set_location()
         x, y = self.get_position()
         self.rect.top = y
         self.rect.left = x
 
     def get_position(self):
-        x = int(self.location[0] * self.tile_size)
-        y = int(self.location[1] * self.tile_size)
-        return x, y
+        return self.position
 
-    def handle_movement(self):
-        s = self.tile_size / (self.movement_limit * 100)
+    def set_position(self, x, y):
+        self.position = (x, y)
 
-        if self.path != [] and self.movement_points == [0, 0, 0, 0]:
+    def modify_position(self, x, y):
+        temp_pos = list(self.position)
+        temp_pos[0] += x
+        temp_pos[1] += y
+        self.position = tuple(temp_pos)
+
+    def set_location(self):
+        position = self.get_position()
+        self.location =  (round(position[0] / self.tile_size), round(position[1] / self.tile_size))
+
+    def handle_movement(self, dt):
+        self.movement_cooldown += dt
+        if self.movement_cooldown >= self.movement_limit and self.path != []:
             current = self.location
             next = self.path.pop()
             if next[1] < current[1]:
-                self.set_movement_points("up")
+                self.movement_points[0] = self.tile_size
             elif next[0] > current[0]:
-                self.set_movement_points("right")
+                self.movement_points[1] = self.tile_size
             elif next[1] > current[1]:
-                self.set_movement_points("down")
+                self.movement_points[2] = self.tile_size
             elif next[0] < current[0]:
-                self.set_movement_points("left")       
+                self.movement_points[3] = self.tile_size
+            self.movement_cooldown = 0.0     
 
-        tmp_list = list(self.location)
-        if self.get_movement_points("up") > 0:
-            tmp_list[1] -= 1
-            self.location = tuple(tmp_list)
+        #the amount required to decrease movement_points each cycle
+        #so that one whole tile is travelled in the time between setting movement points (above)
+        s = self.tile_size / (self.movement_limit * 100) 
+
+        if self.movement_points[0] > 0:
+            self.modify_position(0, -s)
             self.modify_movement_points(0, -s)
-        elif self.get_movement_points("right") > 0:
-            tmp_list[0] += 1
-            self.location = tuple(tmp_list)
+        elif self.movement_points[1] > 0:
+            self.modify_position(s, -0)
             self.modify_movement_points(1, -s)
-        elif self.get_movement_points("down") > 0:
-            tmp_list[1] += 1
-            self.location = tuple(tmp_list)
+        elif self.movement_points[2] > 0:
+            self.modify_position(0, s)
             self.modify_movement_points(2, -s)
-        elif self.get_movement_points("left") > 0:
-            tmp_list[0] -= 1
-            self.location = tuple(tmp_list)
+        elif self.movement_points[3] > 0:
+            self.modify_position(-s, 0)
             self.modify_movement_points(3, -s)
-
-    def get_movement_points(self, direction):
-        if direction == "up":
-            return self.movement_points[0]
-        if direction == "right":
-            return self.movement_points[1]
-        if direction == "down":
-            return self.movement_points[2]
-        if direction == "left":
-            return self.movement_points[3]
-
-    def set_movement_points(self, direction):
-        if direction == "up":
-            self.movement_points[0] = self.tile_size
-        if direction == "right":
-            self.movement_points[1] = self.tile_size
-        if direction == "down":
-            self.movement_points[2] = self.tile_size
-        if direction == "left":
-            self.movement_points[3] = self.tile_size
 
     def modify_movement_points(self, i, modifier):
         if self.movement_points[i] != 0:

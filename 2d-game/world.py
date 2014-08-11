@@ -55,6 +55,5 @@ class World(object):
                 tile.set_image(self.tileset_image, (x, y))
                 tile.add(self.tiles)
                 image.blit(tile.image, (x * self.tile_size, y * self.tile_size))
-                if char != "#":
-                    self.map.append((x, y, tile))
+                self.map.append((x, y, tile))
         return image, image.get_rect()

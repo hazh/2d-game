@@ -55,6 +55,7 @@ class PathFinder(object):
         while current != start:
             current = came_from[current]
             path.append(current)
+        path.pop()
         return path
 
     def heuristic(self, a, b):
