@@ -66,8 +66,11 @@ class Game(object):
 
     def move_entity(self, entity, goal):
         start = entity.location
-        path = self.path_finder.find(start, goal)
-        entity.path = path
+        try:
+            path = self.path_finder.find(start, goal)
+            entity.path = path
+        except:
+            pass
 
     def update(self, dt):
         self.handle_input()

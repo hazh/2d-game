@@ -21,6 +21,9 @@ class Tile(pygame.sprite.Sprite):
         self.image = tileset_image.subsurface(rect)
         self.rect = (location[0] * self.tile_size, location[1] * self.tile_size, self.tile_size, self.tile_size)
 
+    def get_id(self):
+        return self.id
+
 class TileDirt(Tile):
     def __init__(self):
         super(TileDirt, self).__init__(id = 1, name = "Dirt")

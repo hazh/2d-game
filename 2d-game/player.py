@@ -16,7 +16,7 @@ class Player(pygame.sprite.Sprite):
         self.image, self.rect = helpers.load_image("player.png")
         self.tile_size = tile_size
         #player position relative to screen
-        self.position = (0, 0)
+        self.position = (32, 32)
         #player position relative to map
         self.location = (1, 1)
         self.path = []
