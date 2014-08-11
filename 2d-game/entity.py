@@ -9,16 +9,15 @@ except ImportError, err:
     print "cannot load module(s)"
     sys.exit(2)  
 
-class Player(pygame.sprite.Sprite):
+class Entity(pygame.sprite.Sprite):
     
-    def __init__(self, tile_size = 32):
+    def __init__(self, image_path, spawn_location = (1, 1), tile_size = 32):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = helpers.load_image("player.png")
+        self.image, self.rect = helpers.load_image(image_path)
         self.tile_size = tile_size
-        #player position relative to screen
-        self.position = (32, 32)
-        #player position relative to map
-        self.location = (1, 1)
+        #entity position relative to screen
+        self.position = (spawn_location[0] * self.tile_size, spawn_location[1] * self.tile_size)
+        self.location = self.set_location()
         self.path = []
         self.movement_cooldown = 0.0
         self.movement_limit = 0.08
@@ -84,3 +83,7 @@ class Player(pygame.sprite.Sprite):
             self.movement_points[i] += modifier
         else:
             pass
+
+class Player(Entity):
+    def __init__(self):
+        super(Player, self).__init__(image_path = "player.png")

@@ -8,7 +8,7 @@ try:
     import pygame
     from pygame.locals import *
     import world as WORLD
-    import player as PLAYER
+    import entity as ENTITY
     import helpers
     import pathfinder
 except ImportError, err:
@@ -36,8 +36,8 @@ class Game(object):
         self.screen.fill((0, 0, 0))
         pygame.display.set_caption(self.name)
         #initialise objects
-        world = WORLD.World("level.map", self.tile_size)
-        player = PLAYER.Player(self.tile_size)
+        world = WORLD.World("level.map")
+        player = ENTITY.Player()
         self.entities = pygame.sprite.Group(player)
         self.objects = dict(world=world, player=player)
         

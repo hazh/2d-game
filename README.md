@@ -4,7 +4,6 @@ A work-in-progress project.
 
 ##### To-do #####
 
-- Make Player() a subclass of a new parent, Entity().
 - Give tiles weights and take these into account when pathfinding.
 - \+ more Features!
 
