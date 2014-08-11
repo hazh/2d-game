@@ -61,7 +61,7 @@ class Game(object):
 
     def get_mouse_location(self, mouse_position):
         x = (self.objects["world"].rect.left + mouse_position[0]) / self.tile_size
-        y = (self.objects["world"].rect.top + mouse_position[1]) /self.tile_size
+        y = (self.objects["world"].rect.top + mouse_position[1]) / self.tile_size
         return (x, y)
 
     def move_entity(self, entity, goal):

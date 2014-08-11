@@ -38,7 +38,7 @@ class World(object):
     def get_map_from_file(self):
         #reads the map_from_file from file
         world_file = open(self.world_path, "r")
-        map_from_file =  world_file.read().split("\n")
+        map_from_file = world_file.read().split("\n")
         world_file.close()
         return map_from_file
 

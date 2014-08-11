@@ -1,4 +1,7 @@
-# -*- coding: utf-8 -*-
+#
+#   A* algorithm based on http://www.redblobgames.com/pathfinding/a-star/implementation.html#sec-1-4
+#
+
 import heapq
 
 class PriorityQueue(object):
@@ -67,7 +70,7 @@ class PathFinder(object):
         cf, csf = self.search(start, goal)
         return self.reconstruct_path(cf, start, goal)
 
-    def draw(self, start, goal):
+    def draw(self, start, goal): #for debug
         cf, csf = self.search(start, goal)
         path = self.reconstruct_path(cf, start, goal)
         line = ""
