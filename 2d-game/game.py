@@ -41,7 +41,7 @@ class Game(object):
         self.entities = pygame.sprite.Group(player)
         self.objects = dict(world=world, player=player)
         
-        self.path_finder = pathfinder.PathFinder(world.map)
+        self.path_finder = pathfinder.PathFinder(world.nodes)
 
     def get_time(self):
         #returns time passed in seconds

@@ -17,8 +17,9 @@ class Tile(pygame.sprite.Sprite):
         self.tile_size = tile_size
         self.weight = weight
 
-    def set_image(self, tileset_image, location):
-        rect = (self.id * self.tile_size, 0, self.tile_size, self.tile_size)
+    def set_image(self, tileset_image, location, type):
+        self.type = type
+        rect = (self.id * self.tile_size, self.type * self.tile_size, self.tile_size, self.tile_size)
         self.image = tileset_image.subsurface(rect)
         self.rect = (location[0] * self.tile_size, location[1] * self.tile_size, self.tile_size, self.tile_size)
 

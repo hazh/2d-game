@@ -18,13 +18,14 @@ except ImportError, err:
 
 class World(object):
 
-    def __init__(self, world_name = "", tile_size = 32):
+    def __init__(self, world_name = "", tile_size = 32, transition_terrain = False):
         self.tile_size = tile_size
         #os independant file paths
         self.world_path = os.path.join("data", world_name)
-        self.map = []
+        self.nodes = []
         self.tileset_path = "tiles.png"
         self.tiles = pygame.sprite.Group()
+        self.transition_terrain = transition_terrain
         self.load()
 
     def load(self):
@@ -51,9 +52,31 @@ class World(object):
                 elif char == "%":
                     tile = TILE.TileDirt()
                 elif char == "#":
-                    tile = TILE.TileWall()
-                tile.set_image(self.tileset_image, (x, y))
+                    tile = TILE.TileWall()            
+                type = 0
+                if self.transition_terrain:
+                    try:
+                        if self.map_from_file[y-1][x] == char:
+                            type += 1
+                    except:
+                        pass
+                    try:
+                        if self.map_from_file[y][x+1] == char:
+                            type += 2
+                    except:
+                        pass
+                    try:
+                        if self.map_from_file[y+1][x] == char:
+                            type += 4
+                    except:
+                        pass
+                    try:
+                        if self.map_from_file[y][x-2] == char:
+                            type += 8
+                    except:
+                        pass  
+                tile.set_image(self.tileset_image, (x, y), type)
                 tile.add(self.tiles)
                 image.blit(tile.image, (x * self.tile_size, y * self.tile_size))
-                self.map.append((x, y, tile))
+                self.nodes.append((x, y, tile))
         return image, image.get_rect()
