@@ -25,18 +25,23 @@ class Inventory(object):
 
 class Bag(Inventory):
     def __init__(self):
-        super(Bag, self).__init__(length = 25)
+        Inventory.__init__(self, length = 25)
 
 class UniqueInventory(Inventory):
-    def __init__(self):
-        super(UniqueInventory, self).__init__(length = 1)
+    def __init__(self, type):
+        Inventory.__init__(self, length = 1)
+        self.type = type
 
     def add(self, item):
-        self.items[0] = item
+        if item.type == self.type:
+            self.items[0] = item
+        else:
+            print "Wrong item type for this inventory"
+            pass
 
     def empty(self):
         self.items[0] = None
 
 class Hand(UniqueInventory):
     def __init__(self):
-        super(Hand, self).__init__()
+        UniqueInventory.__init__(self)

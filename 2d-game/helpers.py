@@ -8,6 +8,29 @@ except ImportError, err:
     print "cannot load module(s)"
     sys.exit(2)  
 
+class Image(object):
+    _images_to_load = ["player", "tile_grass", "tile_dirt", "tile_wall"]
+    _loaded = {}
+    def __init__(self):
+        for name in self._images_to_load:
+            self._loaded[name] = load_image(name + ".png")
+
+    @property
+    def player(self):
+        return self._loaded["player"]
+
+    @property
+    def tile_grass(self):
+        return self._loaded["tile_grass"]
+
+    @property
+    def tile_dirt(self):
+        return self._loaded["tile_dirt"]
+
+    @property
+    def tile_wall(self):
+        return self._loaded["tile_wall"]
+
 def load_image(name):
     #load an image and get its rect
     fullname = os.path.join("images", name)
@@ -20,7 +43,7 @@ def load_image(name):
     except pygame.error, message:
         print "cannot load image:", name
         raise SystemExit, message
-    return image, image.get_rect()         
+    return image        
 
 def load_sound(name):
     #load a sound

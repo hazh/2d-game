@@ -10,18 +10,15 @@ except ImportError, err:
     sys.exit(2)
 
 class Tile(pygame.sprite.Sprite):
-    def __init__(self, id, name, tile_size = 32, weight = 1):
+    def __init__(self, image, location, id, name, tile_size = 32, weight = 1):
         pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = image.get_rect()
+        self.rect.left, self.rect.top = location[0] * tile_size, location[1] * tile_size
         self.id = id
         self.name = name
         self.tile_size = tile_size
         self.weight = weight
-
-    def set_image(self, tileset_image, location, type):
-        self.type = type
-        rect = (self.id * self.tile_size, self.type * self.tile_size, self.tile_size, self.tile_size)
-        self.image = tileset_image.subsurface(rect)
-        self.rect = (location[0] * self.tile_size, location[1] * self.tile_size, self.tile_size, self.tile_size)
 
     def get_id(self):
         return self.id
@@ -33,13 +30,13 @@ class Tile(pygame.sprite.Sprite):
         pass
 
 class TileDirt(Tile):
-    def __init__(self):
-        super(TileDirt, self).__init__(id = 1, name = "Dirt", weight = 2)
+    def __init__(self, image, location):
+        Tile.__init__(self, image, location, id = 1, name = "Dirt", weight = 2)
 
 class TileGrass(Tile):
-    def __init__(self):
-        super(TileGrass, self).__init__(id = 0, name = "Grass")
+    def __init__(self, image, location):
+        Tile.__init__(self, image, location, id = 0, name = "Grass")
 
 class TileWall(Tile):
-    def __init__(self):
-        super(TileWall, self).__init__(id = 2, name = "Wall", weight = "inf")
+    def __init__(self, image, location):
+        Tile.__init__(self, image, location, id = 2, name = "Wall", weight = "inf")

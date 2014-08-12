@@ -18,14 +18,15 @@ except ImportError, err:
 
 class World(object):
 
-    def __init__(self, world_name = "", tile_size = 32, transition_terrain = False):
+    def __init__(self, world_name, tile_images, tile_size = 32,):
         self.tile_size = tile_size
         #os independant file paths
         self.world_path = os.path.join("data", world_name)
         self.nodes = []
+
         self.tileset_path = "tiles.png"
         self.tiles = pygame.sprite.Group()
-        self.transition_terrain = transition_terrain
+        self.tile_images = tile_images
         self.load()
 
     def load(self):
@@ -33,7 +34,8 @@ class World(object):
         #set some variables for later use
         self.width = len(self.map_from_file[0]) * self.tile_size
         self.height = len(self.map_from_file) * self.tile_size
-        self.tileset_image, self.tileset_rect = helpers.load_image(self.tileset_path)
+        self.tileset_image = helpers.load_image(self.tileset_path)
+        self.tileset_rect = self.tileset_image.get_rect()
         self.image, self.rect = self.create()
 
     def get_map_from_file(self):
@@ -48,34 +50,11 @@ class World(object):
         for y, line in enumerate(self.map_from_file):
             for x, char in enumerate(line):
                 if char == ".":
-                    tile = TILE.TileGrass()
+                    tile = TILE.TileGrass(self.tile_images["tile_grass"], (x, y))
                 elif char == "%":
-                    tile = TILE.TileDirt()
+                    tile = TILE.TileDirt(self.tile_images["tile_dirt"], (x, y))
                 elif char == "#":
-                    tile = TILE.TileWall()            
-                type = 0
-                if self.transition_terrain:
-                    try:
-                        if self.map_from_file[y-1][x] == char:
-                            type += 1
-                    except:
-                        pass
-                    try:
-                        if self.map_from_file[y][x+1] == char:
-                            type += 2
-                    except:
-                        pass
-                    try:
-                        if self.map_from_file[y+1][x] == char:
-                            type += 4
-                    except:
-                        pass
-                    try:
-                        if self.map_from_file[y][x-2] == char:
-                            type += 8
-                    except:
-                        pass  
-                tile.set_image(self.tileset_image, (x, y), type)
+                    tile = TILE.TileWall(self.tile_images["tile_wall"], (x, y))            
                 tile.add(self.tiles)
                 image.blit(tile.image, (x * self.tile_size, y * self.tile_size))
                 self.nodes.append((x, y, tile))

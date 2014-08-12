@@ -7,8 +7,9 @@ try:
     import random
     import pygame
     from pygame.locals import *
+    import screen
     import world as WORLD
-    import entity as ENTITY
+    import entity
     import item
     import helpers
     import pathfinder
@@ -25,25 +26,24 @@ class Game(object):
         self.__dt = 1.0 / self.__physics_FPS
         self.time_current = self.get_time()
         self.accumulator = 0.0
-        #set program variables
-        self.screen_size = (1280, 720)
-        self.screen = pygame.display.set_mode(self.screen_size)
+        #set program variables    
         self.tile_size = 32
         self.name = "2d-game"
-        self.font = pygame.font.SysFont("monospace", 15)
-        #game variables
-       
+
     def load(self):
-        self.screen.fill((0, 0, 0))
-        pygame.display.set_caption(self.name)
         #initialise objects
-        world = WORLD.World("level.map")
-        player = ENTITY.Player()
+        self.screen = screen.Screen((1280, 720), self.name)
+        self.images = helpers.Image()
+        tile_images = {
+            "tile_grass": self.images.tile_grass,
+            "tile_dirt": self.images.tile_dirt,
+            "tile_wall": self.images.tile_wall
+        }
+        world = WORLD.World("level.map", tile_images)
+        player = entity.Player(self.images.player)
         self.objects = dict(world=world, player=player)
-        
         self.path_finder = pathfinder.PathFinder(world.nodes)
 
-        ##########
 
         #sprite groups
         self.entities = pygame.sprite.Group(player)
@@ -85,9 +85,9 @@ class Game(object):
         
     def render(self):
         #draws to screen
-        dirty_tiles = self.objects["world"].tiles.draw(self.screen)
-        dirty_entities = self.entities.draw(self.screen)
-        ###########dirty_overlay = self.overlay.draw(self.screen)
+        dirty_tiles = self.objects["world"].tiles.draw(self.screen.surface)
+        dirty_entities = self.entities.draw(self.screen.surface)
+        dirty_overlay = self.overlay.draw(self.screen.surface)
         #updates screen
         pygame.display.update()
 

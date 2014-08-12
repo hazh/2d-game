@@ -12,9 +12,10 @@ except ImportError, err:
 
 class Entity(pygame.sprite.Sprite):
     
-    def __init__(self, image_path, spawn_location = (1, 1), tile_size = 32):
+    def __init__(self, image, spawn_location = (1, 1), tile_size = 32):
         pygame.sprite.Sprite.__init__(self)
-        self.image, self.rect = helpers.load_image(image_path)
+        self.image = image
+        self.rect = self.image.get_rect()
         self.tile_size = tile_size
         #entity position relative to screen
         self.position = (spawn_location[0] * self.tile_size, spawn_location[1] * self.tile_size)
@@ -91,5 +92,5 @@ class Entity(pygame.sprite.Sprite):
         pass
 
 class Player(Entity):
-    def __init__(self):
-        super(Player, self).__init__(image_path = "player.png")
+    def __init__(self, image):
+        Entity.__init__(self, image)
