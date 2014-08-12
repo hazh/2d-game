@@ -4,6 +4,7 @@ try:
     import os
     import sys
     import pygame
+    import inventory
     import helpers
 except ImportError, err:
     print "cannot load module(s)"
@@ -22,6 +23,8 @@ class Entity(pygame.sprite.Sprite):
         self.movement_cooldown = 0.0
         self.movement_limit = 0.08
         self.movement_points = [0, 0, 0, 0] #up, right, down, left:
+
+        ########self.hand = inventory.Hand()
         
     def update(self, dt):
         self.handle_movement(dt)
@@ -83,6 +86,9 @@ class Entity(pygame.sprite.Sprite):
             self.movement_points[i] += modifier
         else:
             pass
+
+    def open_inventory(self):
+        pass
 
 class Player(Entity):
     def __init__(self):

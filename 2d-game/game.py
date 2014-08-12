@@ -9,6 +9,7 @@ try:
     from pygame.locals import *
     import world as WORLD
     import entity as ENTITY
+    import item
     import helpers
     import pathfinder
 except ImportError, err:
@@ -38,10 +39,15 @@ class Game(object):
         #initialise objects
         world = WORLD.World("level.map")
         player = ENTITY.Player()
-        self.entities = pygame.sprite.Group(player)
         self.objects = dict(world=world, player=player)
         
         self.path_finder = pathfinder.PathFinder(world.nodes)
+
+        ##########
+
+        #sprite groups
+        self.entities = pygame.sprite.Group(player)
+        self.overlay = pygame.sprite.Group()
 
     def get_time(self):
         #returns time passed in seconds
@@ -78,8 +84,11 @@ class Game(object):
         self.entities.update(dt)  
         
     def render(self):
+        #draws to screen
         dirty_tiles = self.objects["world"].tiles.draw(self.screen)
         dirty_entities = self.entities.draw(self.screen)
+        ###########dirty_overlay = self.overlay.draw(self.screen)
+        #updates screen
         pygame.display.update()
 
     def play(self):
