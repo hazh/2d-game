@@ -43,7 +43,7 @@ class Game(object):
         player = entity.Player(self.images.player)
         self.objects = dict(world=world, player=player)
         self.path_finder = pathfinder.PathFinder(world.nodes)
-
+        self.scroll_rects = [pygame.Rect((0, 700), (1280, 20))]
 
         #sprite groups
         self.entities = pygame.sprite.Group(player)
@@ -56,14 +56,18 @@ class Game(object):
     def handle_input(self):
         dt = self.__dt
         player = self.objects["player"]
+        world = self.objects["world"]
+        mouse_position = pygame.mouse.get_pos()
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
-                mouse_position = pygame.mouse.get_pos()
                 mouse_location = self.get_mouse_location(mouse_position)
                 self.move_entity(player, mouse_location)
+        for rect in self.scroll_rects:
+            if rect.collidepoint(mouse_position):
+                print "scroll down"
 
     def get_mouse_location(self, mouse_position):
         x = (self.objects["world"].rect.left + mouse_position[0]) / self.tile_size
@@ -84,6 +88,7 @@ class Game(object):
         self.entities.update(dt)  
         
     def render(self):
+        self.screen.surface.blit(self.objects["world"].image, (0,0), self.screen.rect)
         #draws to screen
         dirty_tiles = self.objects["world"].tiles.draw(self.screen.surface)
         dirty_entities = self.entities.draw(self.screen.surface)

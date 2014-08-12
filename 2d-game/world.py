@@ -10,12 +10,6 @@ except ImportError, err:
     print "cannot load module(s)"
     sys.exit(2)
 
-#KEY = {
-    #".": TileGrass,
-    #"%": TileDirt,
-    #"#": TileWall,
-    #}
-
 class World(object):
 
     def __init__(self, world_name, tile_images, tile_size = 32,):

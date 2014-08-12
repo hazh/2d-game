@@ -15,6 +15,7 @@ class Tile(pygame.sprite.Sprite):
         self.image = image
         self.rect = image.get_rect()
         self.rect.left, self.rect.top = location[0] * tile_size, location[1] * tile_size
+        self.location = location
         self.id = id
         self.name = name
         self.tile_size = tile_size
