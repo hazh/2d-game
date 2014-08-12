@@ -24,7 +24,6 @@ class World(object):
         self.world_path = os.path.join("data", world_name)
         self.nodes = []
 
-        self.tileset_path = "tiles.png"
         self.tiles = pygame.sprite.Group()
         self.tile_images = tile_images
         self.load()
@@ -34,8 +33,6 @@ class World(object):
         #set some variables for later use
         self.width = len(self.map_from_file[0]) * self.tile_size
         self.height = len(self.map_from_file) * self.tile_size
-        self.tileset_image = helpers.load_image(self.tileset_path)
-        self.tileset_rect = self.tileset_image.get_rect()
         self.image, self.rect = self.create()
 
     def get_map_from_file(self):
