@@ -63,14 +63,12 @@ class Game(object):
             "tile_dirt": self.images.tile_dirt,
             "tile_wall": self.images.tile_wall
         }
+
         world = WORLD.World("level.map", tile_images)
         player = entity.Player(self.images.player)
+        self.entities = pygame.sprite.Group(player)
         self.objects = dict(world=world, player=player)
         self.path_finder = pathfinder.PathFinder(world.nodes)
-
-        #sprite groups
-        self.entities = pygame.sprite.Group(player)
-        self.overlay = pygame.sprite.Group()
 
     def get_time(self):
         #returns time passed in seconds
@@ -87,17 +85,17 @@ class Game(object):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 mouse_location = self.get_mouse_location(mouse_position)
-                self.move_entity(player, mouse_location)
+                self.set_entity_path(player, mouse_location)
         for direction, rect in self.camera.scroll_rects.items():
             if rect.collidepoint(mouse_position) and self.camera.is_scrollable(direction, (world.width, world.height)):
                 self.camera.move(direction)
 
     def get_mouse_location(self, mouse_position):
-        x = (self.objects["world"].rect.left + mouse_position[0]) / self.tile_size
-        y = (self.objects["world"].rect.top + mouse_position[1]) / self.tile_size
+        x = (self.camera.left + mouse_position[0]) / self.tile_size
+        y = (self.camera.top + mouse_position[1]) / self.tile_size
         return (x, y)
 
-    def move_entity(self, entity, goal):
+    def set_entity_path(self, entity, goal):
         start = entity.location
         try:
             path = self.path_finder.find(start, goal)
@@ -111,11 +109,9 @@ class Game(object):
         self.entities.update(dt, self.camera.viewport)  
         
     def render(self):
-        self.screen.surface.blit(self.objects["world"].image, self.objects["world"].rect, self.camera.viewport)
-        for entity in self.entities:
-            if self.camera.contains(entity.rect):
-                entity.draw(self.screen.surface)
-        dirty_overlay = self.overlay.draw(self.screen.surface)
+        bg = self.objects["world"].image.copy()
+        self.entities.draw(bg)
+        self.screen.surface.blit(bg, bg.get_rect(), self.camera.viewport)
         pygame.display.update()
 
     def play(self):

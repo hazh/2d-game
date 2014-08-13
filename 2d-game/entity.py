@@ -17,24 +17,48 @@ class Entity(pygame.sprite.Sprite):
         self.image = image
         self.rect = self.image.get_rect()
         self.tile_size = tile_size
-        #entity position relative to screen
-        self.rect.left, self.rect.top = 32, 32
+        self.rect.left, self.rect.top = spawn_location[0] * tile_size, spawn_location[1] * tile_size
+        self.location = spawn_location
+        self.location_counter = [0, None]
         self.path = []
         self.movement_cooldown = 0.0
         self.movement_limit = 0.08
         self.movement_points = [0, 0, 0, 0] #up, right, down, left:
 
+        #the amount required to decrease movement_points each cycle
+        #so that one whole tile is travelled in the time between setting movement points (above)
+        self.s = self.tile_size / (self.movement_limit * 100) 
+
         ########self.hand = inventory.Hand()
         
     def update(self, dt, camera_viewport):
         self.handle_movement(dt)
-        self.set_location(camera_viewport)
+        #self.set_location(camera_viewport)
 
-    def draw(self, surface):
-        surface.blit(self.image, self.rect)
+    def move(self, dir):
+        if dir == "up":
+            self.rect.move_ip(0, -self.s)
+        elif dir == "right":
+            self.rect.move_ip(self.s, 0)
+        elif dir == "down":
+            self.rect.move_ip(0, self.s)
+        elif dir == "left":
+            self.rect.move_ip(-self.s, 0)
+        self.location_counter[0] += self.s
+        self.location_counter[1] = dir
+        if self.location_counter[0] == 32.0:
+            temp = list(self.location)
+            if dir == "up":
+                temp[1] -= 1
+            elif dir == "right":
+                temp[0] += 1
+            elif dir == "down":
+                temp[1] += 1
+            elif dir == "left":
+                temp[0] -= 1
+            self.location = tuple(temp)
+            self.location_counter[0] = 0
 
-    def move(self, x, y):
-        self.rect.move_ip(x, y)
 
     def set_location(self, offset):
         self.location =  (round((self.rect.left + offset[0]) / self.tile_size), round((self.rect.top + offset[1]) / self.tile_size))
@@ -54,22 +78,18 @@ class Entity(pygame.sprite.Sprite):
                 self.movement_points[3] = self.tile_size
             self.movement_cooldown = 0.0     
 
-        #the amount required to decrease movement_points each cycle
-        #so that one whole tile is travelled in the time between setting movement points (above)
-        s = self.tile_size / (self.movement_limit * 100) 
-
         if self.movement_points[0] > 0:
-            self.move(0, -s)
-            self.modify_movement_points(0, -s)
+            self.move("up")
+            self.modify_movement_points(0, -self.s)
         elif self.movement_points[1] > 0:
-            self.move(s, -0)
-            self.modify_movement_points(1, -s)
+            self.move("right")
+            self.modify_movement_points(1, -self.s)
         elif self.movement_points[2] > 0:
-            self.move(0, s)
-            self.modify_movement_points(2, -s)
+            self.move("down")
+            self.modify_movement_points(2, -self.s)
         elif self.movement_points[3] > 0:
-            self.move(-s, 0)
-            self.modify_movement_points(3, -s)
+            self.move("left")
+            self.modify_movement_points(3, -self.s)
 
     def modify_movement_points(self, i, modifier):
         if self.movement_points[i] != 0:
