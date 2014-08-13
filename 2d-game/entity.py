@@ -12,19 +12,6 @@ except ImportError, err:
     print "cannot load module(s)"
     sys.exit(2)  
 
-class Entities(pygame.sprite.Group):
-
-    def __init__(self, *sprites):
-        pygame.sprite.Group.__init__(self, *sprites)
-
-    def render(self, surface):
-        for sprite in self.sprites():
-            sprite.render(surface)
-
-    def update(self, dt, *args):
-        for s in self.sprites():
-            s.update(dt, None, *args)
-
 class Entity(pygame.sprite.Sprite):
     
     def __init__(self, image, spawn_location = (1, 1), tile_size = 32):
@@ -46,7 +33,7 @@ class Entity(pygame.sprite.Sprite):
 
         self.hand = inventory.Hand()
         
-    def update(self, dt, surface):
+    def update(self, dt):
         self.handle_movement(dt)
 
     def move(self, dir):
@@ -113,8 +100,8 @@ class Entity(pygame.sprite.Sprite):
 class Player(Entity):
     def __init__(self, image):
         Entity.__init__(self, image)
-        self.inventory_label = widget.Label(self.hand.__str__(), 10, 10)
 
     def render(self, surface):
-        self.inventory_label.draw(surface)
+        l = widget.Label(self.hand.__str__(), 10, 10)
+        l.draw(surface)
 

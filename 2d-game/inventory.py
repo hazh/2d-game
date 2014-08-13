@@ -24,7 +24,10 @@ class Inventory(object):
             print item
 
     def __str__(self):
-        return str(self.items)
+        str = "inventory: "
+        for item in self.items:
+            str += item.name + ", "
+        return str
 
 class Bag(Inventory):
     def __init__(self):

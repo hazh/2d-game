@@ -41,7 +41,7 @@ class Game(object):
         world = WORLD.World("level.map", tile_images)
         self.path_finder = pathfinder.PathFinder(world.nodes)
         player = entity.Player(self.images.player)
-        self.entities = entity.Entities(player)
+        self.entities = pygame.sprite.Group(player)
         self.objects = dict(world=world, player=player)
 
 
@@ -90,7 +90,7 @@ class Game(object):
         bg = self.objects["world"].image.copy()
         self.entities.draw(bg)
         self.screen.surface.blit(bg, bg.get_rect(), self.camera.viewport)
-        self.entities.render(self.screen.surface)
+        self.objects["player"].render(self.screen.surface)
         pygame.display.update()
 
     def play(self):
