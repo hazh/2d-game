@@ -8,6 +8,7 @@ try:
     import pygame
     from pygame.locals import *
     import screen
+    import camera
     import world as WORLD
     import entity
     import item
@@ -16,6 +17,28 @@ try:
 except ImportError, err:
     print "cannot load module(s)!",
     sys.exit(2)
+
+#####
+#
+# group.draw() draws each sprite to surface at the sprite's rect
+# blit() draws surface onto other surface
+#
+# do i want to create an background image composed of all tiles and blit() that to screen?
+# or add each tile to a group and draw() the group?
+#
+# it comes down to how scrolling is handled. Do i create a camera class?
+# how does the camera ony render a certain area of the map, (its viewport), is this a rect?
+
+
+
+# implement draw method for entities
+# check whether entity collides with current viewport
+# if so draw them
+# entity location needs to be tracked independantly in order to do this
+
+
+#
+#####
 
 class Game(object):
     
@@ -33,6 +56,7 @@ class Game(object):
     def load(self):
         #initialise objects
         self.screen = screen.Screen((1280, 720), self.name)
+        self.camera = camera.Camera((1280, 720))
         self.images = helpers.Image()
         tile_images = {
             "tile_grass": self.images.tile_grass,
@@ -43,7 +67,6 @@ class Game(object):
         player = entity.Player(self.images.player)
         self.objects = dict(world=world, player=player)
         self.path_finder = pathfinder.PathFinder(world.nodes)
-        self.scroll_rects = [pygame.Rect((0, 700), (1280, 20))]
 
         #sprite groups
         self.entities = pygame.sprite.Group(player)
@@ -65,9 +88,9 @@ class Game(object):
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 mouse_location = self.get_mouse_location(mouse_position)
                 self.move_entity(player, mouse_location)
-        for rect in self.scroll_rects:
-            if rect.collidepoint(mouse_position):
-                print "scroll down"
+        for direction, rect in self.camera.scroll_rects.items():
+            if rect.collidepoint(mouse_position) and self.camera.is_scrollable(direction, (world.width, world.height)):
+                self.camera.move(direction)
 
     def get_mouse_location(self, mouse_position):
         x = (self.objects["world"].rect.left + mouse_position[0]) / self.tile_size
@@ -85,15 +108,14 @@ class Game(object):
     def update(self, dt):
         self.handle_input()
         #call update method for all entities
-        self.entities.update(dt)  
+        self.entities.update(dt, self.camera.viewport)  
         
     def render(self):
-        self.screen.surface.blit(self.objects["world"].image, (0,0), self.screen.rect)
-        #draws to screen
-        dirty_tiles = self.objects["world"].tiles.draw(self.screen.surface)
-        dirty_entities = self.entities.draw(self.screen.surface)
+        self.screen.surface.blit(self.objects["world"].image, self.objects["world"].rect, self.camera.viewport)
+        for entity in self.entities:
+            if self.camera.contains(entity.rect):
+                entity.draw(self.screen.surface)
         dirty_overlay = self.overlay.draw(self.screen.surface)
-        #updates screen
         pygame.display.update()
 
     def play(self):

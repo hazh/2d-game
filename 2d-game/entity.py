@@ -18,8 +18,7 @@ class Entity(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.tile_size = tile_size
         #entity position relative to screen
-        self.position = (spawn_location[0] * self.tile_size, spawn_location[1] * self.tile_size)
-        self.location = self.set_location()
+        self.rect.left, self.rect.top = 32, 32
         self.path = []
         self.movement_cooldown = 0.0
         self.movement_limit = 0.08
@@ -27,28 +26,18 @@ class Entity(pygame.sprite.Sprite):
 
         ########self.hand = inventory.Hand()
         
-    def update(self, dt):
+    def update(self, dt, camera_viewport):
         self.handle_movement(dt)
-        self.set_location()
-        x, y = self.get_position()
-        self.rect.top = y
-        self.rect.left = x
+        self.set_location(camera_viewport)
 
-    def get_position(self):
-        return self.position
+    def draw(self, surface):
+        surface.blit(self.image, self.rect)
 
-    def set_position(self, x, y):
-        self.position = (x, y)
+    def move(self, x, y):
+        self.rect.move_ip(x, y)
 
-    def modify_position(self, x, y):
-        temp_pos = list(self.position)
-        temp_pos[0] += x
-        temp_pos[1] += y
-        self.position = tuple(temp_pos)
-
-    def set_location(self):
-        position = self.get_position()
-        self.location =  (round(position[0] / self.tile_size), round(position[1] / self.tile_size))
+    def set_location(self, offset):
+        self.location =  (round((self.rect.left + offset[0]) / self.tile_size), round((self.rect.top + offset[1]) / self.tile_size))
 
     def handle_movement(self, dt):
         self.movement_cooldown += dt
@@ -70,16 +59,16 @@ class Entity(pygame.sprite.Sprite):
         s = self.tile_size / (self.movement_limit * 100) 
 
         if self.movement_points[0] > 0:
-            self.modify_position(0, -s)
+            self.move(0, -s)
             self.modify_movement_points(0, -s)
         elif self.movement_points[1] > 0:
-            self.modify_position(s, -0)
+            self.move(s, -0)
             self.modify_movement_points(1, -s)
         elif self.movement_points[2] > 0:
-            self.modify_position(0, s)
+            self.move(0, s)
             self.modify_movement_points(2, -s)
         elif self.movement_points[3] > 0:
-            self.modify_position(-s, 0)
+            self.move(-s, 0)
             self.modify_movement_points(3, -s)
 
     def modify_movement_points(self, i, modifier):

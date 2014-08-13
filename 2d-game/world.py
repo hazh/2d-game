@@ -18,7 +18,6 @@ class World(object):
         self.world_path = os.path.join("data", world_name)
         self.nodes = []
 
-        self.tiles = pygame.sprite.Group()
         self.tile_images = tile_images
         self.load()
 
@@ -46,7 +45,6 @@ class World(object):
                     tile = TILE.TileDirt(self.tile_images["tile_dirt"], (x, y))
                 elif char == "#":
                     tile = TILE.TileWall(self.tile_images["tile_wall"], (x, y))            
-                tile.add(self.tiles)
                 image.blit(tile.image, (x * self.tile_size, y * self.tile_size))
                 self.nodes.append((x, y, tile))
         return image, image.get_rect()
