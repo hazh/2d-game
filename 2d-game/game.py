@@ -7,38 +7,17 @@ try:
     import random
     import pygame
     from pygame.locals import *
-    import screen
     import camera
-    import world as WORLD
     import entity
-    import item
     import helpers
+    import item
     import pathfinder
+    import screen
+    import widget
+    import world as WORLD
 except ImportError, err:
     print "cannot load module(s)!",
     sys.exit(2)
-
-#####
-#
-# group.draw() draws each sprite to surface at the sprite's rect
-# blit() draws surface onto other surface
-#
-# do i want to create an background image composed of all tiles and blit() that to screen?
-# or add each tile to a group and draw() the group?
-#
-# it comes down to how scrolling is handled. Do i create a camera class?
-# how does the camera ony render a certain area of the map, (its viewport), is this a rect?
-
-
-
-# implement draw method for entities
-# check whether entity collides with current viewport
-# if so draw them
-# entity location needs to be tracked independantly in order to do this
-
-
-#
-#####
 
 class Game(object):
     
@@ -48,13 +27,9 @@ class Game(object):
         self.__physics_FPS = 100.0
         self.__dt = 1.0 / self.__physics_FPS
         self.time_current = self.get_time()
-        self.accumulator = 0.0
-        #set program variables    
+        self.accumulator = 0.0   
         self.tile_size = 32
         self.name = "2d-game"
-
-    def load(self):
-        #initialise objects
         self.screen = screen.Screen((1280, 720), self.name)
         self.camera = camera.Camera((1280, 720))
         self.images = helpers.Image()
@@ -63,12 +38,15 @@ class Game(object):
             "tile_dirt": self.images.tile_dirt,
             "tile_wall": self.images.tile_wall
         }
-
         world = WORLD.World("level.map", tile_images)
-        player = entity.Player(self.images.player)
-        self.entities = pygame.sprite.Group(player)
-        self.objects = dict(world=world, player=player)
         self.path_finder = pathfinder.PathFinder(world.nodes)
+        player = entity.Player(self.images.player)
+        self.entities = entity.Entities(player)
+        self.objects = dict(world=world, player=player)
+
+
+        k = item.Key(self.images.key)
+        player.hand.add(k)
 
     def get_time(self):
         #returns time passed in seconds
@@ -106,16 +84,17 @@ class Game(object):
     def update(self, dt):
         self.handle_input()
         #call update method for all entities
-        self.entities.update(dt, self.camera.viewport)  
+        self.entities.update(dt)  
         
     def render(self):
         bg = self.objects["world"].image.copy()
         self.entities.draw(bg)
         self.screen.surface.blit(bg, bg.get_rect(), self.camera.viewport)
+        self.entities.render(self.screen.surface)
         pygame.display.update()
 
     def play(self):
-        self.load()
+        pygame.font.init()
         dt = self.__dt
         while True:
             time_new = self.get_time()

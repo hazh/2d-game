@@ -9,7 +9,7 @@ except ImportError, err:
     sys.exit(2)  
 
 class Image(object):
-    _images_to_load = ["player", "tile_grass", "tile_dirt", "tile_wall"]
+    _images_to_load = ["player", "key", "tile_grass", "tile_dirt", "tile_wall"]
     _loaded = {}
     def __init__(self):
         for name in self._images_to_load:
@@ -18,6 +18,10 @@ class Image(object):
     @property
     def player(self):
         return self._loaded["player"]
+
+    @property
+    def key(self):
+        return self._loaded["key"]
 
     @property
     def tile_grass(self):

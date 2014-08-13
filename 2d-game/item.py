@@ -21,10 +21,14 @@ class Item(pygame.sprite.Sprite):
         }
     }
 
-    def __init__(self, id):
+    def __init__(self, image, id):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = image
+        self.rect = self.image.get_rect()
         self.id = id
-        self.name = _items[id]["name"]
+        self.name = self._items[id]["name"]
+        self.type = self._items[id]["type"]
 
 class Key(Item):
-    def __init__(self):
-        Item.__init__(self, id = "1")
+    def __init__(self, image):
+        Item.__init__(self, image, id = "1")

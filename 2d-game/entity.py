@@ -5,10 +5,25 @@ try:
     import sys
     import pygame
     import inventory
+    import item
     import helpers
+    import widget
 except ImportError, err:
     print "cannot load module(s)"
     sys.exit(2)  
+
+class Entities(pygame.sprite.Group):
+
+    def __init__(self, *sprites):
+        pygame.sprite.Group.__init__(self, *sprites)
+
+    def render(self, surface):
+        for sprite in self.sprites():
+            sprite.render(surface)
+
+    def update(self, dt, *args):
+        for s in self.sprites():
+            s.update(dt, None, *args)
 
 class Entity(pygame.sprite.Sprite):
     
@@ -29,11 +44,10 @@ class Entity(pygame.sprite.Sprite):
         #so that one whole tile is travelled in the time between setting movement points (above)
         self.s = self.tile_size / (self.movement_limit * 100) 
 
-        ########self.hand = inventory.Hand()
+        self.hand = inventory.Hand()
         
-    def update(self, dt, camera_viewport):
+    def update(self, dt, surface):
         self.handle_movement(dt)
-        #self.set_location(camera_viewport)
 
     def move(self, dir):
         if dir == "up":
@@ -58,10 +72,6 @@ class Entity(pygame.sprite.Sprite):
                 temp[0] -= 1
             self.location = tuple(temp)
             self.location_counter[0] = 0
-
-
-    def set_location(self, offset):
-        self.location =  (round((self.rect.left + offset[0]) / self.tile_size), round((self.rect.top + offset[1]) / self.tile_size))
 
     def handle_movement(self, dt):
         self.movement_cooldown += dt
@@ -103,3 +113,8 @@ class Entity(pygame.sprite.Sprite):
 class Player(Entity):
     def __init__(self, image):
         Entity.__init__(self, image)
+        self.inventory_label = widget.Label(self.hand.__str__(), 10, 10)
+
+    def render(self, surface):
+        self.inventory_label.draw(surface)
+

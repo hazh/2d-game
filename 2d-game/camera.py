@@ -14,7 +14,7 @@ class Camera(pygame.Rect):
         self.left = 0
         self.top = 0
         self.width, self.height = size
-        self.rect_size = 20
+        self.rect_size = 5
         self.scroll_rects = {
             "up": pygame.Rect((0, 0), (size[0], self.rect_size)),
             "right": pygame.Rect((size[0]-self.rect_size, 0), (self.rect_size, size[1])),

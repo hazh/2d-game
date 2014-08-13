@@ -23,6 +23,9 @@ class Inventory(object):
         for item in self.items:
             print item
 
+    def __str__(self):
+        return str(self.items)
+
 class Bag(Inventory):
     def __init__(self):
         Inventory.__init__(self, length = 25)
@@ -35,13 +38,14 @@ class UniqueInventory(Inventory):
     def add(self, item):
         if item.type == self.type:
             self.items[0] = item
+            return True
         else:
             print "Wrong item type for this inventory"
-            pass
+            return False
 
     def empty(self):
         self.items[0] = None
 
 class Hand(UniqueInventory):
     def __init__(self):
-        UniqueInventory.__init__(self)
+        UniqueInventory.__init__(self, type = "hand")
