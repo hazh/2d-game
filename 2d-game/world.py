@@ -16,7 +16,7 @@ class World(object):
         self.tile_size = tile_size
         #os independant file paths
         self.world_path = os.path.join("data", world_name)
-        self.nodes = []
+        self.nodes = {}
 
         self.tile_images = tile_images
         self.load()
@@ -46,5 +46,5 @@ class World(object):
                 elif char == "#":
                     tile = TILE.TileWall(self.tile_images["tile_wall"], (x, y))            
                 image.blit(tile.image, (x * self.tile_size, y * self.tile_size))
-                self.nodes.append((x, y, tile))
+                self.nodes[(x, y)] = tile
         return image, image.get_rect()

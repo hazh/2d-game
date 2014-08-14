@@ -26,9 +26,9 @@ class PathFinder(object):
         result = []
         for dir in dirs:
             neighbour = (node[0] + dir[0], node[1] + dir[1])
-            for possible_neighbour in self.nodes:
-                if possible_neighbour[0] == neighbour[0] and possible_neighbour[1] == neighbour[1] and possible_neighbour[2].get_id() != 2:
-                    result.append((neighbour[0], neighbour[1]))
+            for possible_neighbour in self.nodes.keys():
+                if possible_neighbour == neighbour and self.nodes[possible_neighbour].get_id() != 2:
+                    result.append(neighbour)
         return result
 
     def search(self, start, goal):

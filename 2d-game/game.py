@@ -73,12 +73,19 @@ class Game(object):
         y = (self.camera.top + mouse_position[1]) / self.tile_size
         return (x, y)
 
+    def is_wall(self, location):
+        world = self.objects["world"]
+        if world.nodes[location].get_id() == 2:
+            return True
+        else:
+            return False
+
     def set_entity_path(self, entity, goal):
-        start = entity.location
-        try:
+        if not self.is_wall(goal):
+            start = entity.location
             path = self.path_finder.find(start, goal)
             entity.path = path
-        except:
+        else:
             pass
 
     def update(self, dt):
