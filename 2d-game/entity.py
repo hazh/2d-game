@@ -4,9 +4,10 @@ try:
     import os
     import sys
     import pygame
+    import container
+    import helpers    
     import inventory
     import item
-    import helpers
     import widget
 except ImportError, err:
     print "cannot load module(s)"
@@ -112,9 +113,9 @@ class Player(Entity):
 
     def render(self, surface):
         inv = widget.Label(self.hand.__str__(), 10, 40)
-        inv.draw(surface)
         pygame.draw.rect(surface, (255, 0, 0), (70, 10, self.hp, inv.get_linesize()))
         pygame.draw.rect(surface, (0, 0, 0), (70 + self.hp, 10, self.hp_max - self.hp, inv.get_linesize()))
         hp = widget.Label("hp: " + str(self.hp), 10, 12)
-        hp.draw(surface)
+        info = container.Container(0, 0, 200, 200, inv, hp)
+        info.draw(surface)
 

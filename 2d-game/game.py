@@ -8,6 +8,7 @@ try:
     import pygame
     from pygame.locals import *
     import camera
+    import console
     import entity
     import helpers
     import item
@@ -45,6 +46,7 @@ class Game(object):
         self.entities = pygame.sprite.Group(player, dummy)
         self.objects = dict(world=world, player=player, dummy=dummy)
 
+        self.console = console.Console()
 
         k = item.Key(self.images.key)
         player.hand.add(k)
@@ -64,6 +66,7 @@ class Game(object):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 mouse_location = self.get_mouse_location(mouse_position)
+                self.console.log("location: "+ str(mouse_location))
                 self.click_router(mouse_location)
         for direction, rect in self.camera.scroll_rects.items():
             if rect.collidepoint(mouse_position) and self.camera.is_scrollable(direction, (world.width, world.height)):
@@ -78,7 +81,7 @@ class Game(object):
         target, type = self.get_target(location)
         if type == "entity" and self.objects["player"].location in self.path_finder.neighbours(location):
             self.objects["player"].hand.get().use(target)
-        elif type == "tile":
+        elif target == True and type == "tile": #checks if target is not wall. if it is a wall, returns target = False
             self.set_entity_path(self.objects["player"], location)
 
     def get_target(self, location):
@@ -86,8 +89,10 @@ class Game(object):
             if entity.location == location:
                 return entity, "entity"
         world = self.objects["world"]
-        if world.nodes[location].is_traversable:
-            return None, "tile"
+        if world.nodes[location].is_traversable():
+            return True, "tile"
+        else:
+            return False, "tile"
 
     def set_entity_path(self, entity, goal):
         start = entity.location
@@ -104,6 +109,7 @@ class Game(object):
         self.entities.draw(bg)
         self.screen.surface.blit(bg, bg.get_rect(), self.camera.viewport)
         self.objects["player"].render(self.screen.surface)
+        self.console.draw(self.screen.surface)
         pygame.display.update()
 
     def play(self):

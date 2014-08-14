@@ -3,7 +3,7 @@
 try:
     import os
     import sys
-    import pygame    
+    import pygame
     import helpers
 except ImportError, err:
     print "cannot load module(s)"

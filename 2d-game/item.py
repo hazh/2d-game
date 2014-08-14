@@ -9,9 +9,6 @@ except ImportError, err:
     print "cannot load module(s)"
     sys.exit(2)  
 
-
-
-
 class Item(pygame.sprite.Sprite):
 
     _items = {

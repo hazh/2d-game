@@ -1,8 +1,14 @@
 #
 #   A* algorithm based on http://www.redblobgames.com/pathfinding/a-star/implementation.html#sec-1-4
 #
+try:
+    import os
+    import sys
+    import heapq
+except ImportError, err:
+    print "cannot load module(s)"
+    sys.exit(2)  
 
-import heapq
 
 class PriorityQueue(object):
    def __init__(self):
