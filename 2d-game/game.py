@@ -41,8 +41,9 @@ class Game(object):
         world = WORLD.World("level.map", tile_images)
         self.path_finder = pathfinder.PathFinder(world.nodes)
         player = entity.Player(self.images.player)
-        self.entities = pygame.sprite.Group(player)
-        self.objects = dict(world=world, player=player)
+        dummy = entity.Entity(self.images.player)
+        self.entities = pygame.sprite.Group(player, dummy)
+        self.objects = dict(world=world, player=player, dummy=dummy)
 
 
         k = item.Key(self.images.key)
@@ -63,7 +64,7 @@ class Game(object):
                 sys.exit()
             if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
                 mouse_location = self.get_mouse_location(mouse_position)
-                self.set_entity_path(player, mouse_location)
+                self.click_router(mouse_location)
         for direction, rect in self.camera.scroll_rects.items():
             if rect.collidepoint(mouse_position) and self.camera.is_scrollable(direction, (world.width, world.height)):
                 self.camera.move(direction)
@@ -73,20 +74,25 @@ class Game(object):
         y = (self.camera.top + mouse_position[1]) / self.tile_size
         return (x, y)
 
-    def is_wall(self, location):
+    def click_router(self, location):
+        target, type = self.get_target(location)
+        if type == "entity" and self.objects["player"].location in self.path_finder.neighbours(location):
+            self.objects["player"].hand.get().use(target)
+        elif type == "tile":
+            self.set_entity_path(self.objects["player"], location)
+
+    def get_target(self, location):
+        for entity in self.entities:
+            if entity.location == location:
+                return entity, "entity"
         world = self.objects["world"]
-        if world.nodes[location].get_id() == 2:
-            return True
-        else:
-            return False
+        if world.nodes[location].is_traversable:
+            return None, "tile"
 
     def set_entity_path(self, entity, goal):
-        if not self.is_wall(goal):
-            start = entity.location
-            path = self.path_finder.find(start, goal)
-            entity.path = path
-        else:
-            pass
+        start = entity.location
+        path = self.path_finder.find(start, goal)
+        entity.path = path
 
     def update(self, dt):
         self.handle_input()

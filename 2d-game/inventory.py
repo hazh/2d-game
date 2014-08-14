@@ -19,14 +19,18 @@ class Inventory(object):
     def remove(self, i):
         self.items[i] = None
 
-    def read(self):
-        for item in self.items:
-            print item
+    def get(self, i):
+        return self.items[i]
 
     def __str__(self):
         str = "inventory: "
+        l = len(self.items) - 1
         for item in self.items:
-            str += item.name + ", "
+            if item == self.items[l]:
+                end = "."
+            else:
+                end = ", "
+            str += item.name + end
         return str
 
 class Bag(Inventory):
@@ -39,7 +43,7 @@ class UniqueInventory(Inventory):
         self.type = type
 
     def add(self, item):
-        if item.type == self.type:
+        if item.inventory_type == self.type:
             self.items[0] = item
             return True
         else:
@@ -48,6 +52,9 @@ class UniqueInventory(Inventory):
 
     def empty(self):
         self.items[0] = None
+
+    def get(self):
+        return self.items[0]
 
 class Hand(UniqueInventory):
     def __init__(self):

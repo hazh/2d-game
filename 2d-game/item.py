@@ -17,7 +17,7 @@ class Item(pygame.sprite.Sprite):
     _items = {
         "1": {
             "name": "key",
-            "type": "hand"
+            "inventory_type": "hand"
         }
     }
 
@@ -27,7 +27,12 @@ class Item(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.id = id
         self.name = self._items[id]["name"]
-        self.type = self._items[id]["type"]
+        self.inventory_type = self._items[id]["inventory_type"]
+
+    #if item has no use() method then it will be used as a blunt weapon
+
+    def use(self, target):
+        target.modify_hp(-40)
 
 class Key(Item):
     def __init__(self, image):

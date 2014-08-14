@@ -31,6 +31,11 @@ class Entity(pygame.sprite.Sprite):
         #so that one whole tile is travelled in the time between setting movement points (above)
         self.s = self.tile_size / (self.movement_limit * 100) 
 
+
+        self.hp = 100.0
+        self.hp_max = 100.0
+
+
         self.hand = inventory.Hand()
         
     def update(self, dt):
@@ -94,14 +99,22 @@ class Entity(pygame.sprite.Sprite):
         else:
             pass
 
-    def open_inventory(self):
-        pass
+    def modify_hp(self, modifier):
+        self.hp += modifier
+        if self.hp > self.hp_max:
+            self.hp = self.hp_max
+        elif self.hp <= 0:
+            self.kill()
 
 class Player(Entity):
     def __init__(self, image):
         Entity.__init__(self, image)
 
     def render(self, surface):
-        l = widget.Label(self.hand.__str__(), 10, 10)
-        l.draw(surface)
+        inv = widget.Label(self.hand.__str__(), 10, 40)
+        inv.draw(surface)
+        pygame.draw.rect(surface, (255, 0, 0), (70, 10, self.hp, inv.get_linesize()))
+        pygame.draw.rect(surface, (0, 0, 0), (70 + self.hp, 10, self.hp_max - self.hp, inv.get_linesize()))
+        hp = widget.Label("hp: " + str(self.hp), 10, 12)
+        hp.draw(surface)
 

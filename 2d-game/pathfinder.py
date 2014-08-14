@@ -27,7 +27,7 @@ class PathFinder(object):
         for dir in dirs:
             neighbour = (node[0] + dir[0], node[1] + dir[1])
             for possible_neighbour in self.nodes.keys():
-                if possible_neighbour == neighbour and self.nodes[possible_neighbour].get_id() != 2:
+                if possible_neighbour == neighbour and self.nodes[possible_neighbour].is_traversable() == True:
                     result.append(neighbour)
         return result
 

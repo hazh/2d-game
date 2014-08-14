@@ -21,8 +21,11 @@ class Tile(pygame.sprite.Sprite):
         self.tile_size = tile_size
         self.weight = weight
 
-    def get_id(self):
-        return self.id
+    def is_traversable(self):
+        if self.id == 2:
+            return False
+        else:
+            return True
 
     def get_weight(self):
         return self.weight
