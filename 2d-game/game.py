@@ -42,7 +42,7 @@ class Game(object):
         world = WORLD.World("level.map", tile_images)
         self.path_finder = pathfinder.PathFinder(world.nodes)
         player = entity.Player(self.images.player)
-        dummy = entity.Entity(self.images.player)
+        dummy = entity.Entity(self.images.player, spawn_location = (16, 2))
         self.entities = pygame.sprite.Group(player, dummy)
         self.objects = dict(world=world, player=player, dummy=dummy)
 
@@ -80,7 +80,7 @@ class Game(object):
     def click_router(self, location):
         target, type = self.get_target(location)
         if type == "entity" and self.objects["player"].location in self.path_finder.neighbours(location):
-            self.objects["player"].hand.get().use(target)
+            self.objects["player"].initiate_combat(target)
         elif target == True and type == "tile": #checks if target is not wall. if it is a wall, returns target = False
             self.set_entity_path(self.objects["player"], location)
 

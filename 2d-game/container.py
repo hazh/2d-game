@@ -36,6 +36,8 @@ class ScrollingContainer(Container):
         Container.__init__(self, x, y, width, height, *widgets)
 
     def append(self, widget):
+        if len(self.widgets) > 15:
+            self.widgets.pop()
         for w in self.widgets:
             w.rect.top -= 20
         widget.rect.top = self.rect.height -12

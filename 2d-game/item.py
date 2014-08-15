@@ -13,6 +13,10 @@ class Item(pygame.sprite.Sprite):
 
     _items = {
         "1": {
+            "name": "fist",
+            "inventory_type": "hand"
+        },
+        "2": {
             "name": "key",
             "inventory_type": "hand"
         }
@@ -31,6 +35,13 @@ class Item(pygame.sprite.Sprite):
     def use(self, target):
         target.modify_hp(-40)
 
-class Key(Item):
+class Fist(Item):
     def __init__(self, image):
         Item.__init__(self, image, id = "1")
+
+class Key(Item):
+    def __init__(self, image):
+        Item.__init__(self, image, id = "2")
+
+    def use(self, target):
+        target.modify_hp(-60)

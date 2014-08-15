@@ -4,6 +4,7 @@ try:
     import os
     import sys
     import pygame
+    import item
     import helpers
 except ImportError, err:
     print "cannot load module(s)"
@@ -59,3 +60,9 @@ class UniqueInventory(Inventory):
 class Hand(UniqueInventory):
     def __init__(self):
         UniqueInventory.__init__(self, type = "hand")
+
+    def get(self):
+        if self.items[0] != None:
+            return self.items[0]
+        else:
+            return item.Fist(helpers.load_image("key.png"))

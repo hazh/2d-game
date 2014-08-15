@@ -4,6 +4,7 @@ try:
     import os
     import sys
     import pygame
+    import combat
     import container
     import helpers    
     import inventory
@@ -25,7 +26,7 @@ class Entity(pygame.sprite.Sprite):
         self.location_counter = [0, None]
         self.path = []
         self.movement_cooldown = 0.0
-        self.movement_limit = 0.08
+        self.movement_limit = 0.16
         self.movement_points = [0, 0, 0, 0] #up, right, down, left:
 
         #the amount required to decrease movement_points each cycle
@@ -35,11 +36,18 @@ class Entity(pygame.sprite.Sprite):
 
         self.hp = 100.0
         self.hp_max = 100.0
-
+        self.combat = None
+        self.combat_cooldown = 0.0
 
         self.hand = inventory.Hand()
         
     def update(self, dt):
+        if self.combat != None and self.combat_cooldown == 0.0:
+            self.combat_cooldown = 250.0
+            self.combat.fight()
+        elif self.combat_cooldown > 0.0:
+            self.combat_cooldown -= 2.0
+        self.update_status()
         self.handle_movement(dt)
 
     def move(self, dir):
@@ -102,10 +110,19 @@ class Entity(pygame.sprite.Sprite):
 
     def modify_hp(self, modifier):
         self.hp += modifier
+
+    def update_status(self):
         if self.hp > self.hp_max:
             self.hp = self.hp_max
         elif self.hp <= 0:
-            self.kill()
+            self.die()
+
+    def die(self):
+        self.kill()
+
+    def initiate_combat(self, target):
+        if self.combat == None:
+            self.combat = combat.Combat(self, target)
 
 class Player(Entity):
     def __init__(self, image):
