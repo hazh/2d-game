@@ -20,6 +20,10 @@ except ImportError, err:
     print "cannot load module(s)!",
     sys.exit(2)
 
+pygame.init()
+SCREEN = screen.Screen((1280, 720), "2d-game")
+IMAGES = helpers.Image()
+
 class Game(object):
     
     def __init__(self):
@@ -29,26 +33,23 @@ class Game(object):
         self.__dt = 1.0 / self.__physics_FPS
         self.time_current = self.get_time()
         self.accumulator = 0.0   
-        self.tile_size = 32
-        self.name = "2d-game"
-        self.screen = screen.Screen((1280, 720), self.name)
+        self.tile_size = 32 
         self.camera = camera.Camera((1280, 720))
-        self.images = helpers.Image()
         tile_images = {
-            "tile_grass": self.images.tile_grass,
-            "tile_dirt": self.images.tile_dirt,
-            "tile_wall": self.images.tile_wall
+            "tile_grass": IMAGES.tile_grass,
+            "tile_dirt": IMAGES.tile_dirt,
+            "tile_wall": IMAGES.tile_wall
         }
         world = WORLD.World("level.map", tile_images)
         self.path_finder = pathfinder.PathFinder(world.nodes)
-        player = entity.Player(self.images.player)
-        dummy = entity.Entity(self.images.player, spawn_location = (16, 2))
+        player = entity.Player(IMAGES.player)
+        dummy = entity.Entity(IMAGES.player, spawn_location = (16, 2))
         self.entities = pygame.sprite.Group(player, dummy)
         self.objects = dict(world=world, player=player, dummy=dummy)
 
         self.console = console.Console()
 
-        k = item.Key(self.images.key)
+        k = item.Key(IMAGES.key)
         player.hand.add(k)
 
     def get_time(self):
@@ -107,9 +108,9 @@ class Game(object):
     def render(self):
         bg = self.objects["world"].image.copy()
         self.entities.draw(bg)
-        self.screen.surface.blit(bg, bg.get_rect(), self.camera.viewport)
-        self.objects["player"].render(self.screen.surface)
-        self.console.draw(self.screen.surface)
+        SCREEN.surface.blit(bg, bg.get_rect(), self.camera.viewport)
+        self.objects["player"].render(SCREEN.surface)
+        self.console.draw(SCREEN.surface)
         pygame.display.update()
 
     def play(self):
@@ -130,7 +131,6 @@ class Game(object):
             self.render()
 
 def main():
-    pygame.init()
     game = Game()
     game.play()
 

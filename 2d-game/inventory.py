@@ -4,6 +4,7 @@ try:
     import os
     import sys
     import pygame
+    import game
     import item
     import helpers
 except ImportError, err:
@@ -65,4 +66,4 @@ class Hand(UniqueInventory):
         if self.items[0] != None:
             return self.items[0]
         else:
-            return item.Fist(helpers.load_image("key.png"))
+            return item.Fist(game.IMAGES.key)
