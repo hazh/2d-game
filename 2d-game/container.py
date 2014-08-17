@@ -11,8 +11,8 @@ except ImportError, err:
 
 class Container(object):
 
-    def __init__(self, x, y, width, height, *widgets):
-        self.widgets = list(widgets)
+    def __init__(self, x, y, width, height, widgets):
+        self.widgets = widgets
         self.surface = pygame.Surface((width, height), pygame.SRCALPHA, 32)
         self.surface = self.surface.convert_alpha()
         self.rect = self.surface.get_rect()
@@ -25,15 +25,13 @@ class Container(object):
 
 class ScrollingContainer(Container):
 
-    def __init__(self, x, y, width, height, *widgets):
-        temp_widgets = list(widgets)
-        top = height
-        for widget in temp_widgets:
-            widget.rect.top = top
-            top -= 20
-            print widget.rect.top
-        widgets = tuple(temp_widgets)
-        Container.__init__(self, x, y, width, height, *widgets)
+    def __init__(self, x, y, width, height, widgets = []):
+        if widgets != []:
+            top = height
+            for widget in widgets:
+                widget.rect.top = top
+                top -= 20
+        Container.__init__(self, x, y, width, height, widgets)
 
     def append(self, widget):
         if len(self.widgets) > 15:

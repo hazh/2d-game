@@ -19,5 +19,5 @@ class Console(object):
     def log(self, text):
         self.container.append(widget.Label("> " + text, 0, 0))  
 
-    def draw(self, surface):
+    def render(self, surface):
         self.container.draw(surface)

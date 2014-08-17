@@ -49,8 +49,10 @@ class Game(object):
 
         self.console = console.Console()
 
-        k = item.Key(IMAGES.key)
-        player.hand.add(k)
+        s = item.Sword(IMAGES.key)
+        b = item.Bandage(IMAGES.key)
+        player.hand.add(s)
+        player.bag.add(0, b)
 
     def get_time(self):
         #returns time passed in seconds
@@ -110,7 +112,7 @@ class Game(object):
         self.entities.draw(bg)
         SCREEN.surface.blit(bg, bg.get_rect(), self.camera.viewport)
         self.objects["player"].render(SCREEN.surface)
-        self.console.draw(SCREEN.surface)
+        self.console.render(SCREEN.surface)
         pygame.display.update()
 
     def play(self):

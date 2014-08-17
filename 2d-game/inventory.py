@@ -25,14 +25,11 @@ class Inventory(object):
         return self.items[i]
 
     def __str__(self):
-        str = "inventory: "
+        str = ""
         l = len(self.items) - 1
         for item in self.items:
-            if item == self.items[l]:
-                end = "."
-            else:
-                end = ", "
-            str += item.name + end
+            if item != None:
+                str += item.name + "  "
         return str
 
 class Bag(Inventory):

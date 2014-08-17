@@ -6,6 +6,7 @@ try:
     import pygame
     import combat
     import container
+    import game
     import helpers    
     import inventory
     import item
@@ -33,13 +34,32 @@ class Entity(pygame.sprite.Sprite):
         #so that one whole tile is travelled in the time between setting movement points (above)
         self.s = self.tile_size / (self.movement_limit * 100) 
 
-
         self.hp = 100.0
         self.hp_max = 100.0
         self.combat = None
         self.combat_cooldown = 0.0
 
+        self._statuses = {
+            "bleeding": False
+        }
+
+        self.bag = inventory.Bag()
         self.hand = inventory.Hand()
+
+        self.notifications = []
+        self.notifications_cooldown = 0.0
+
+    @property
+    def bleeding(self):
+        return self._statuses["bleeding"]
+
+    @bleeding.setter
+    def bleeding(self, value):
+        self._statuses["bleeding"] = value
+
+    def append_notifications(self, text):
+        self.notifications.append(widget.Label(text, 0, 0))
+        self.notifications_cooldown = 100.0
         
     def update(self, dt):
         if self.combat != None and self.combat_cooldown == 0.0:
@@ -47,6 +67,10 @@ class Entity(pygame.sprite.Sprite):
             self.combat.fight()
         elif self.combat_cooldown > 0.0:
             self.combat_cooldown -= 2.0
+        if self.notifications_cooldown > 0.0:
+            self.notifications_cooldown -= 2.0
+        elif self.notifications_cooldown == 0.0 and self.notifications != []:
+            self.notifications = []
         self.update_status()
         self.handle_movement(dt)
 
@@ -129,10 +153,14 @@ class Player(Entity):
         Entity.__init__(self, image)
 
     def render(self, surface):
-        inv = widget.Label(self.hand.__str__(), 10, 40)
-        pygame.draw.rect(surface, (255, 0, 0), (70, 10, self.hp, inv.get_linesize()))
-        pygame.draw.rect(surface, (0, 0, 0), (70 + self.hp, 10, self.hp_max - self.hp, inv.get_linesize()))
+        inv_bag = widget.Label("bag: " + self.bag.__str__(), 10, 40)
+        inv_hand = widget.Label("hand: " + self.hand.__str__(), 10, 60)
+        pygame.draw.rect(surface, (255, 0, 0), (70, 10, self.hp, inv_hand.get_linesize()))
+        pygame.draw.rect(surface, (0, 0, 0), (70 + self.hp, 10, self.hp_max - self.hp, inv_hand.get_linesize()))
         hp = widget.Label("hp: " + str(self.hp), 10, 12)
-        info = container.Container(0, 0, 200, 200, inv, hp)
+        info = container.Container(0, 0, 200, 200, [inv_bag, inv_hand, hp])
         info.draw(surface)
-
+        if self.notifications != []:
+            notifications = container.Container(self.rect.centerx - 6, self.rect.centery - 6, 32, 32, self.notifications)
+            print inv_hand.get_linesize()
+            notifications.draw(surface)        

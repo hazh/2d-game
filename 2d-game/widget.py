@@ -23,6 +23,6 @@ class Label(Widget, pygame.font.Font):
 
     def __init__(self, text, x, y):
         f = None
-        pygame.font.Font.__init__(self, f, 15)
+        pygame.font.Font.__init__(self, f, 16)
         self.surface = self.render(text, True, (255,255,255), (0,0,0))
         Widget.__init__(self, self.surface, x, y)
